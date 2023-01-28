@@ -13,6 +13,13 @@ describe('MoviesService', () => {
     service = module.get<MoviesService>(MoviesService);
   });
 
+  /*
+  afterAll(() => {
+    //테스트가 다 끝난 후에 실행, 예를 들어 데이터베이스를 깨끗하게 정리해주는 function 실행
+  });
+  이 외에도 많은 Hook 존재
+  */
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
@@ -78,6 +85,29 @@ describe('MoviesService', () => {
       });
       const afterCreate = service.getAll().length;
       expect(afterCreate).toBeGreaterThan(beforeCreate);
+    });
+  });
+
+  describe('update()', () => {
+    it('should update a movie', () => {
+      service.create({
+        title: 'Test Movie',
+        genres: ['test'],
+        year: 2000,
+      });
+      service.update(1, {
+        title: 'Updated Test',
+      });
+      const movie = service.getOne(1);
+      expect(movie.title).toEqual('Updated Test');
+    });
+
+    it('should return a 404', () => {
+      try {
+        service.update(999, {}); // id에 999가 없으므로 당연히 동작 X => NotFoundException 발생
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
     });
   });
 });
