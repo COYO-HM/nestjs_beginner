@@ -18,7 +18,6 @@ describe('MoviesService', () => {
   });
 
   describe('getAll()', () => {
-    // getAll이 array를 return하는지 테스트
     it('should return an array', () => {
       const result = service.getAll();
       expect(result).toBeInstanceOf(Array);
@@ -44,6 +43,41 @@ describe('MoviesService', () => {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toEqual(`Movie with 999 not found`);
       }
+    });
+  });
+
+  describe('deleteOne()', () => {
+    it('deletes a movie', () => {
+      service.create({
+        title: 'Test Movie',
+        genres: ['test'],
+        year: 2000,
+      });
+      const allMovies = service.getAll().length;
+      service.deleteOne(1);
+      const afterDelete = service.getAll().length;
+      expect(afterDelete).toBeLessThan(allMovies);
+    });
+
+    it('should return a 404', () => {
+      try {
+        service.deleteOne(999); // id에 999가 없으므로 당연히 동작 X => NotFoundException 발생
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
+
+  describe('create()', () => {
+    it('should create a movie', () => {
+      const beforeCreate = service.getAll().length;
+      service.create({
+        title: 'Test Movie',
+        genres: ['test'],
+        year: 2000,
+      });
+      const afterCreate = service.getAll().length;
+      expect(afterCreate).toBeGreaterThan(beforeCreate);
     });
   });
 });
