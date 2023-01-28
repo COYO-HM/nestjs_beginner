@@ -48,9 +48,6 @@ export class MoviesController {
 
   @Patch(':id') // 리소스의 부분 업데이트 시에 사용
   update(@Param('id') id: string, @Body() updateData) {
-    return {
-      updateMovie: id,
-      ...updateData,
-    };
+    return this.moviesService.update(id, updateData);
   }
 }
